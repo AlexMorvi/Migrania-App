@@ -14,7 +14,7 @@ jobs:
     
     services:
       postgres:
-        image: postgres:14
+        image: postgres:15
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
@@ -46,7 +46,12 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libpq-dev postgresql-client
+        # Install PostgreSQL 15 client to match the service version
+        sudo apt-get install -y wget ca-certificates
+        wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+        echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+        sudo apt-get update
+        sudo apt-get install -y libpq-dev postgresql-client-15
     
     - name: Install Python dependencies
       working-directory: ./backend
@@ -70,11 +75,14 @@ jobs:
     
     - name: Wait for PostgreSQL to be ready
       run: |
-        until pg_isready -h localhost -p 5432 -U postgres; do
+        # Use the specific PostgreSQL 15 client
+        until /usr/lib/postgresql/15/bin/pg_isready -h localhost -p 5432 -U postgres; do
           echo "Waiting for PostgreSQL..."
           sleep 2
         done
         echo "PostgreSQL is ready!"
+        # Verify PostgreSQL version
+        psql -h localhost -p 5432 -U postgres -d test_migraine_db -c "SELECT version();"
     
     - name: Test database connection
       working-directory: ./backend
