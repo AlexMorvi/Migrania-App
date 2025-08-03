@@ -1,8 +1,18 @@
 import os
 import django
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "migraine_app.settings")
-django.setup()
+# Configurar Django solo si no está ya configurado
+if not os.environ.get('DJANGO_SETTINGS_MODULE'):
+    # Usar settings_ci solo si estamos en CI, sino usar settings normal
+    if os.getenv('CI') == 'true':
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'migraine_app.settings_ci')
+    else:
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'migraine_app.settings')
+
+try:
+    django.setup()
+except:
+    pass  # Django ya está configurado
 
 from behave import *
 from django.utils import timezone

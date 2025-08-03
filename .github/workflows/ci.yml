@@ -60,6 +60,7 @@ jobs:
         pip install -r requirements.txt
         pip install behave
         pip install behave-django
+        pip install python-dateutil
     
     - name: Set environment variables
       env:
@@ -126,32 +127,53 @@ jobs:
         behave --version
         echo 'Behave setup verification complete'
     
-    - name: Run Behave tests - Agendamiento Citas
+    - name: Run Behave test - Agendamiento Citas
       working-directory: ./backend
       run: |
         python -c "import django; django.setup()" || true
-        behave agendamiento_citas/features/ --format=progress --no-capture --stop
+        behave agendamiento_citas/features/agendamiento_citas.feature --format=progress --no-capture --stop
       continue-on-error: true
     
-    - name: Run Behave tests - Evaluación Diagnóstico
+    - name: Run Behave test - Autoevaluación MIDAS
       working-directory: ./backend
       run: |
         python -c "import django; django.setup()" || true
-        behave evaluacion_diagnostico/features/ --format=progress --no-capture --stop
+        behave evaluacion_diagnostico/features/autoevaluacion_midas.feature --format=progress --no-capture --stop
       continue-on-error: true
     
-    - name: Run Behave tests - Tratamiento
+    - name: Run Behave test - Bitácora Digital
       working-directory: ./backend
       run: |
         python -c "import django; django.setup()" || true
-        behave tratamiento/features/ --format=progress --no-capture --stop
+        behave evaluacion_diagnostico/features/bitacora_digital.feature --format=progress --no-capture --stop
       continue-on-error: true
     
-    - name: Run Behave tests - Analíticas
+    - name: Run Behave test - Análisis Factores Desencadenantes
       working-directory: ./backend
       run: |
         python -c "import django; django.setup()" || true
-        behave analiticas/features/ --format=progress --no-capture --stop
+        behave analiticas/features/analisis_factores_desencadenantes.feature --format=progress --no-capture --stop
+      continue-on-error: true
+    
+    - name: Run Behave test - Estadísticas Historial
+      working-directory: ./backend
+      run: |
+        python -c "import django; django.setup()" || true
+        behave analiticas/features/estadisticas_historial.feature --format=progress --no-capture --stop
+      continue-on-error: true
+    
+    - name: Run Behave test - Aseguramiento Tratamiento
+      working-directory: ./backend
+      run: |
+        python -c "import django; django.setup()" || true
+        behave tratamiento/features/aseguramiento_tratamiento.feature --format=progress --no-capture --stop
+      continue-on-error: true
+    
+    - name: Run Behave test - Generación Seguimiento Tratamiento
+      working-directory: ./backend
+      run: |
+        python -c "import django; django.setup()" || true
+        behave tratamiento/features/generacion_seguimiento_tratamiento.feature --format=progress --no-capture --stop
       continue-on-error: true
     
     - name: Run All Behave tests (consolidated report)
