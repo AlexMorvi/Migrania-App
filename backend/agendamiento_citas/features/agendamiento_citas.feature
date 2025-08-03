@@ -1,4 +1,4 @@
-Característica: : Agendamiento de citas medicas
+Característica: Agendamiento de citas medicas
   Como paciente,
   quiero agendar una cita médica con un doctor disponible,
   para recibir atención médica en el momento más conveniente.

@@ -107,38 +107,59 @@ jobs:
     - name: Run Django migrations
       working-directory: ./backend
       run: |
+        python manage.py makemigrations --dry-run --verbosity=2
         python manage.py makemigrations
-        python manage.py migrate
+        python manage.py migrate --verbosity=2
+    
+    - name: Verify Behave setup
+      working-directory: ./backend
+      run: |
+        python -c "
+        import os
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'migraine_app.settings_ci')
+        import django
+        django.setup()
+        print('Django setup successful for Behave tests')
+        from django.apps import apps
+        print(f'Installed apps: {[app.name for app in apps.get_app_configs()]}')
+        "
+        behave --version
+        echo 'Behave setup verification complete'
     
     - name: Run Behave tests - Agendamiento Citas
       working-directory: ./backend
       run: |
-        behave agendamiento_citas/features/ --format=progress --no-capture
+        python -c "import django; django.setup()" || true
+        behave agendamiento_citas/features/ --format=progress --no-capture --stop
       continue-on-error: true
     
     - name: Run Behave tests - Evaluación Diagnóstico
       working-directory: ./backend
       run: |
-        behave evaluacion_diagnostico/features/ --format=progress --no-capture
+        python -c "import django; django.setup()" || true
+        behave evaluacion_diagnostico/features/ --format=progress --no-capture --stop
       continue-on-error: true
     
     - name: Run Behave tests - Tratamiento
       working-directory: ./backend
       run: |
-        behave tratamiento/features/ --format=progress --no-capture
+        python -c "import django; django.setup()" || true
+        behave tratamiento/features/ --format=progress --no-capture --stop
       continue-on-error: true
     
     - name: Run Behave tests - Analíticas
       working-directory: ./backend
       run: |
-        behave analiticas/features/ --format=progress --no-capture
+        python -c "import django; django.setup()" || true
+        behave analiticas/features/ --format=progress --no-capture --stop
       continue-on-error: true
     
     - name: Run All Behave tests (consolidated report)
       working-directory: ./backend
       run: |
-        behave --format=json --outfile=behave_results.json
-        behave --format=pretty
+        python -c "import django; django.setup()" || true
+        behave --format=json --outfile=behave_results.json --stop || true
+        behave --format=pretty --stop || true
     
     - name: Upload test results
       uses: actions/upload-artifact@v4

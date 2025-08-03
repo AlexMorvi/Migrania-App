@@ -11,9 +11,8 @@ Característica: Análisis de factores desencadenantes de migrañas
     Entonces se genera una alerta con el mensaje "Factores no médicos identificados como posibles desencadenantes"
     Y se sugiere tomar precauciones para evitar estos factores desencadenantes sin necesidad de intervención médica.
 
-    Ejemplo:
+    Ejemplos:
       | cantidad | factores_desc  |
-      | -------- | -------------- |
       | 3        | L              |
       | 4        | L,S            |
 
@@ -23,9 +22,8 @@ Característica: Análisis de factores desencadenantes de migrañas
     Entonces se genera una alerta con el mensaje "Patrón de factores médicos o clínicos identificados"
     Y se recomienda contactar a un profesional de salud para una evaluación adicional.
 
-    Ejemplo:
+    Ejemplos:
       | cantidad | factores_desc  |
-      | -------- | -------------- |
       | 3        | S,M            |
       | 4        | L,S,M          |
 
