@@ -62,15 +62,20 @@ jobs:
         pip install behave-django
     
     - name: Set environment variables
+      env:
+        POSTGRES_PASSWORD_SECRET: ${{ secrets.POSTGRES_PASSWORD }}
+        POSTGRES_USER_SECRET: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_DB_SECRET: ${{ secrets.POSTGRES_DB }}
+        SECRET_KEY_SECRET: ${{ secrets.SECRET_KEY }}
       run: |
         echo "DJANGO_SETTINGS_MODULE=migraine_app.settings_ci" >> $GITHUB_ENV
-        echo "POSTGRES_DB=test_migraine_db" >> $GITHUB_ENV
-        echo "POSTGRES_USER=postgres" >> $GITHUB_ENV
-        echo "POSTGRES_PASSWORD=postgres" >> $GITHUB_ENV
+        echo "POSTGRES_DB=${POSTGRES_DB_SECRET:-test_migraine_db}" >> $GITHUB_ENV
+        echo "POSTGRES_USER=${POSTGRES_USER_SECRET:-postgres}" >> $GITHUB_ENV
+        echo "POSTGRES_PASSWORD=${POSTGRES_PASSWORD_SECRET:-postgres}" >> $GITHUB_ENV
         echo "POSTGRES_HOST=localhost" >> $GITHUB_ENV
         echo "POSTGRES_PORT=5432" >> $GITHUB_ENV
         echo "DEBUG=True" >> $GITHUB_ENV
-        echo "SECRET_KEY=test-secret-key-for-ci-very-long-and-secure" >> $GITHUB_ENV
+        echo "SECRET_KEY=${SECRET_KEY_SECRET:-test-secret-key-for-ci-very-long-and-secure}" >> $GITHUB_ENV
         echo "CI=true" >> $GITHUB_ENV
     
     - name: Wait for PostgreSQL to be ready
@@ -82,7 +87,7 @@ jobs:
         done
         echo "PostgreSQL is ready!"
         # Verify PostgreSQL version
-        psql -h localhost -p 5432 -U postgres -d test_migraine_db -c "SELECT version();"
+        PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d test_migraine_db -c "SELECT version();"
     
     - name: Test database connection
       working-directory: ./backend
