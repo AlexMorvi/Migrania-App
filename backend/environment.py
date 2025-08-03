@@ -8,8 +8,11 @@ def before_all(context):
     Este environment.py sirve para TODAS las apps del proyecto
     """
     
-    # Configurar Django
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'migraine_app.settings')
+    # Configurar Django - usar settings_ci si estamos en CI
+    if os.getenv('CI') == 'true':
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'migraine_app.settings_ci')
+    else:
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'migraine_app.settings')
     
     # Verificar si Django ya está configurado (evitar error "populate() isn't reentrant")
     from django.apps import apps
